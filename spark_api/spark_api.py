@@ -179,13 +179,22 @@ async def request_chat(
 
 
 # 测试
-async def main():
-    model = chat_models[5] # 4.0Ultra
-    global chat_history
-    params = ChatParams()
-    question = "Hello, how are you?"
-    response = await request_chat(model, chat_history, params, question)
-    print("Response from assistant:", response)
+# def show_chat_history(history: ChatHistory)->None:
+#     """显示消息记录"""
+#     for msg in history.messages:
+#         print(f"{msg['role']}: {msg['content']}")
 
-if __name__ == "__main__":
-    asyncio.run(main()) # 采用异步方式运行main函数
+# async def main():
+#     model = chat_models[5] # 4.0Ultra
+#     global chat_history
+#     params = ChatParams()
+#     while 1:
+#         question = input("Input question:")
+#         if question == "history":
+#             show_chat_history(chat_history)
+#             continue
+#         response = await request_chat(model, chat_history, params, question)
+#         print("Response from assistant:", response)
+
+# if __name__ == "__main__":
+#     asyncio.run(main()) # 采用异步方式运行main函数
