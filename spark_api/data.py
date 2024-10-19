@@ -5,9 +5,10 @@ chat_models: 聊天模型列表
 chat_history: 消息记录
 """
 
-from .data_structure import(
+from data_structure import(
     ChatModel,
-    ChatHistory
+    ChatHistory,
+    ChatParams
 )
 
 chat_models = [
@@ -22,3 +23,6 @@ chat_models = [
 
 chat_history = ChatHistory()
 """ChatHistory: 消息记录"""
+
+chat_params = ChatParams()
+"""ChatParams: 聊天参数"""

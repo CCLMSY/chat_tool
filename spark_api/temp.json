@@ -1,0 +1,24 @@
+{
+    "header": {
+        "app_id": "b9b8b7a0",
+        "uid": "CCLMSY"
+    },
+    "parameter": {
+        "chat": {
+            "domain": "4.0Ultra",
+            "max_tokens": 8192,
+            "temperature": 0.5,
+            "top_k": 4
+        }
+    },
+    "payload": {
+        "message": {
+            "text": [
+                {
+                    "sender": "user",
+                    "content": "Hello, how are you?"
+                }
+            ]
+        }
+    }
+}
