@@ -5,7 +5,7 @@ chat_models: 聊天模型列表
 chat_history: 消息记录
 """
 
-from data_structure import(
+from spark_api.data_structure import(
     ChatModel,
     ChatHistory,
     ChatParams

@@ -3,7 +3,8 @@
 该模块提供一个简单的聊天界面，用户可以通过输入框与模拟AI进行对话。
 聊天界面包括发送消息、选择模型、清空聊天记录等功能。
 """
-
+import asyncio
+from qasync import QEventLoop
 import sys
 from datetime import datetime
 from PyQt6.QtWidgets import (
@@ -12,6 +13,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QFont, QTextCursor, QTextBlockFormat, QTextCharFormat, QAction
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QObject
+from chat_process.chat_process import ProcessingModule
 
 
 class ChatGui(QMainWindow):
@@ -69,11 +71,16 @@ class ChatGui(QMainWindow):
 
         layout.addLayout(input_layout)
 
+    ##因为processing_module.process是一个异步函数，所以需要在这里设置信号与处理方法的连接
+    async def _process(self, data: list):
+        """异步处理数据"""
+        await self.processing_module.process(data)
+
     def _setup_signals(self):
         """设置信号与处理方法的连接。"""
         self.processing_module.process_finish.connect(self._on_process_finish)
         self.processing_module.process_fail.connect(self._on_process_fail)
-        self.send_data_signal.connect(self.processing_module.process)
+        self.send_data_signal.connect(lambda data: asyncio.create_task(self._process(data)))
         self.timeout_signal.connect(self._on_process_fail)
 
     def _setup_menu(self):
@@ -160,6 +167,7 @@ class ChatGui(QMainWindow):
         Args:
             response: 处理模块返回的消息内容。
         """
+        #print(response)
         self._replace_processing_message(response)
         self.allow_send = True
         self.send_button.setEnabled(True)
@@ -245,42 +253,45 @@ class ChatGui(QMainWindow):
 
 
 #----------------以下是模拟处理模块
-class ProcessingModule(QObject):
-    """处理模块，用于模拟与AI的交互。
+# class ProcessingModule(QObject):
+#     """处理模块，用于模拟与AI的交互。
 
-    Attributes:
-        process_finish: 处理成功信号。
-        process_fail: 处理失败信号。
-    """
-    process_finish = pyqtSignal(str)
-    process_fail = pyqtSignal(str)
+#     Attributes:
+#         process_finish: 处理成功信号。
+#         process_fail: 处理失败信号。
+#     """
+#     process_finish = pyqtSignal(str)
+#     process_fail = pyqtSignal(str)
 
-    def process(self, data: list):
-        """模拟处理数据并返回结果。
+#     def process(self, data: list):
+#         """模拟处理数据并返回结果。
 
-        Args:
-            data: 发送的数据列表，包含唯一标识、模型名称、信息类型和内容。
-        """
-        QTimer.singleShot(1000, lambda: self._mock_process(data))
+#         Args:
+#             data: 发送的数据列表，包含唯一标识、模型名称、信息类型和内容。
+#         """
+#         QTimer.singleShot(1000, lambda: self._mock_process(data))
 
-    def _mock_process(self, data: list):
-        """模拟处理逻辑，直接返回处理结果。
+#     def _mock_process(self, data: list):
+#         """模拟处理逻辑，直接返回处理结果。
 
-        Args:
-            data: 发送的数据列表，包含唯一标识、模型名称、信息类型和内容。
-        """
-        unique_id, model, msg_type, content = data
-        response = f"Received: {content} using model {model}"
-        self.process_finish.emit(response)
+#         Args:
+#             data: 发送的数据列表，包含唯一标识、模型名称、信息类型和内容。
+#         """
+#         unique_id, model, msg_type, content = data
+#         response = f"Received: {content} using model {model}"
+#         self.process_finish.emit(response)
 
 
-def run():
+async def main():
     """程序入口，启动聊天界面应用。"""
     app = QApplication(sys.argv)
     gui = ChatGui()
     gui.show()
-    sys.exit(app.exec())
+    loop = QEventLoop(app) 
+    asyncio.set_event_loop(loop) # 设置事件循环
+    with loop:
+        await loop.run_forever()
 
 
 if __name__ == "__main__":
-    run()
+    asyncio.run(main())

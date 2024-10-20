@@ -1,4 +1,10 @@
-from PyQt6.QtCore import QObject, pyqtSignal
+import sys
+import os
+
+# 获取当前文件的目录，并将项目根目录添加到sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QObject
 from spark_api import spark_api
 import asyncio
 
@@ -13,13 +19,13 @@ class ProcessingModule(QObject):
         chat_params : ChatParams, 聊天参数类, 用于设置聊天参数 //目前前端没有设置聊天参数
         chat_model : ChatModel, 聊天模型类, 用于设置聊天模型
     """
+    process_finish = pyqtSignal(str)
+    process_fail = pyqtSignal(str)
     
     def __init__(self):
         
         """初始化处理模块。"""
         super().__init__()
-        self.process_finish = pyqtSignal(str)
-        self.process_fail = pyqtSignal(str)
         self.chat_history = spark_api.ChatHistory()
         self.chat_params = spark_api.ChatParams()
         self.model = spark_api.chat_models[0]
@@ -31,9 +37,16 @@ class ProcessingModule(QObject):
             data: list, 前端传来的数据，包含唯一标识、模型名称、信息类型和内容。
         """
         resquest_data = self.translate(data)
-        api_result = await self.resquest_chat(resquest_data)
-        
-    
+        try:
+            api_result = await self.resquest_chat(resquest_data)
+            response = self.translate_result(api_result, data)
+            #print(response)
+            self.process_finish.emit(response)
+            
+        except Exception as e:
+            self.process_fail.emit(str(e))
+            #print(str(e))
+
     def translate(self, data: list) -> list:
         """翻译数据,将前端传来的数据翻译成后端需要的数据格式。
 
@@ -68,6 +81,21 @@ class ProcessingModule(QObject):
         
         return api_result
     
+    ##将处理结果转化为前端展示的格式
+    def translate_result(self, api_result: str, data: list) -> str:
+        """翻译结果,将后端返回的数据翻译成前端需要的数据格式。
+
+        Args:
+            api_result: str, 后端返回的数据，包含机器人的回答。
+            data: list, 前端传来的数据，包含唯一标识、模型名称、信息类型和内容。
+            
+        return:
+            res: str, 前端需要的数据格式，包含所使用的模型名称和机器人的回答。
+        """
+        response = f"Received: {api_result} using model {data[1]}"
+        
+        return response
+        
 
 ## 测试
 # if __name__ == "__main__":

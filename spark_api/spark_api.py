@@ -11,15 +11,15 @@ from wsgiref.handlers import format_date_time
 import websockets
 import asyncio
 
-from data_structure import(
+from spark_api.data_structure import(
     ChatModel,
     ChatHistory,
     ChatParams
 )
-from config import(
+from spark_api.config import(
     app_id, api_secret, api_key # API信息
 )
-from data import (
+from spark_api.data import (
     chat_models,
     chat_history
 )
