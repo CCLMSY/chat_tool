@@ -87,3 +87,7 @@ class ChatHistory:
         self.messages.append(msg)
         self._msg_len.append(len(str(msg)))
 
+    def clear(self) -> None:
+        """清空消息记录"""
+        self.messages = []
+        self._msg_len = []

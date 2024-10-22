@@ -2,7 +2,6 @@ import base64
 import hashlib
 import hmac
 import json
-import ssl
 from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode, urlparse
