@@ -37,7 +37,7 @@ class ChatGui(QMainWindow):
         self.setWindowTitle("聊一聊")
         self.setGeometry(800, 450, 800, 600)
 
-        self.current_model = "模型1"
+        self.current_model = "1.Spark Lite"
         self.data_structure = []
         self.allow_send = True
         self.processing_message_id = None
@@ -99,7 +99,7 @@ class ChatGui(QMainWindow):
 
         settings_menu = menubar.addMenu('设置')
         self.model_combo = QComboBox(self)
-        self.model_combo.addItems(["模型1", "模型2", "模型3"])
+        self.model_combo.addItems(["1.Spark Lite", "2.Spark Pro", "3.Spark Pro-128K", "4.Spark Max", "5.Spark Max-32K", "6.Spark4.0 Ultra"])
         self.model_combo.setCurrentIndex(0)
         self.model_combo.currentIndexChanged.connect(self._on_model_changed)
 
@@ -167,25 +167,29 @@ class ChatGui(QMainWindow):
         Args:
             response: 处理模块返回的消息内容。
         """
-        #print(response)
         self._replace_processing_message(response)
         self.allow_send = True
         self.send_button.setEnabled(True)
         self._stop_timeout_timer()
 
     @pyqtSlot(str)
-    def _on_process_fail(self, timestamp: str):
+    def _on_process_fail(self, error: str):
         """处理处理模块失败的情况。
 
         Args:
-            timestamp: 当前消息的唯一标识符。
+            code: 错误信息,有可能是API调用返回错误状态也可能是当前消息的唯一标识符。
         """
-        if timestamp == self.processing_message_id:
-            self._replace_processing_message("处理失败，请重试。", is_error=True)
+        if error == self.processing_message_id:
+            self._replace_processing_message("处理超时，请重试。", is_error=True)
             self.allow_send = True
             self.send_button.setEnabled(True)
             self._stop_timeout_timer()
-
+        else:
+            self._replace_processing_message(error, is_error=True)
+            self.allow_send = True
+            self.send_button.setEnabled(True)
+            self._stop_timeout_timer()
+            
     def _display_message(self, message: str, tag: str) -> int:
         """显示消息到聊天显示区。
 
@@ -239,10 +243,11 @@ class ChatGui(QMainWindow):
             char_format.setForeground(Qt.GlobalColor.red)
             formatted_message = f"<b>{self.current_model}</b><br><span style='color:red;'>{new_message}</span>"
         else:
-            formatted_message = f"<b>{self.current_model}</b><br>{new_message}"
+            formatted_message = f"<b>{self.current_model}</b>{new_message}"
 
         cursor.select(QTextCursor.SelectionType.BlockUnderCursor)
         cursor.insertBlock(block_format, char_format)
+        temp = f"<div style='text-align: left;'>{formatted_message}</div>"
         cursor.insertHtml(f"<div style='text-align: left;'>{formatted_message}</div>")
         self.chat_display.setTextCursor(cursor)
         self.chat_display.ensureCursorVisible()
