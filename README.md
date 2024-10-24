@@ -10,11 +10,7 @@
 2. 设置界面
    1. API设置（APIPassword）
    2. 模型设置
-      1. 模型选择（litegeneralv3
-pro-128k
-generalv3.5
-max-32k
-4.0Ultra
+      1. 模型选择
       2. 模型参数
    3. 日志（记录每次调用的API和返回结果）
 3. 帮助界面
