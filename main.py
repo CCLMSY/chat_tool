@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QTextEdit, QPushButton, QTextBrowser, QComboBox, QMenuBar, QWidgetAction
 )
 from PyQt6.QtGui import QFont, QTextCursor, QTextBlockFormat, QTextCharFormat, QAction
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QObject
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot
 from chat_process.chat_process import ProcessingModule
 
 
@@ -34,7 +34,7 @@ class ChatGui(QMainWindow):
     def __init__(self):
         """初始化聊天界面。"""
         super().__init__()
-        self.setWindowTitle("聊一聊")
+        self.setWindowTitle("AI Chat Client")
         self.setGeometry(800, 450, 800, 600)
 
         self.current_model = "1.Spark Lite"
