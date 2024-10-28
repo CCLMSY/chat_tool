@@ -4,6 +4,7 @@
 
 Classes:
     ChatModel: 聊天模型类
+    ChatParams: 聊天参数类
     ChatHistory: 消息记录类
 """
 
