@@ -41,7 +41,7 @@ class ChatGui(QMainWindow):
         self.data_structure = []
         self.allow_send = True
         self.processing_message_id = None
-        self.processing_block_position = None
+        self.processing_block_position = 0
 
         self.processing_module = ProcessingModule()
 
@@ -86,18 +86,27 @@ class ChatGui(QMainWindow):
     def _setup_menu(self):
         """设置菜单栏，包括文件、编辑和设置菜单。"""
         menubar = self.menuBar()
+        if not menubar:
+            raise ValueError("No menu bar found.")
 
         file_menu = menubar.addMenu('文件')
+        if not file_menu:
+            raise ValueError("Failed to create file menu.")
+
         exit_action = QAction('退出', self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
         edit_menu = menubar.addMenu('编辑')
+        if not edit_menu:
+            raise ValueError("Failed to create edit menu.")
         clear_action = QAction('清空', self)
         clear_action.triggered.connect(self._clear_chat)
         edit_menu.addAction(clear_action)
 
         settings_menu = menubar.addMenu('设置')
+        if not settings_menu:
+            raise ValueError("Failed to create settings menu.")
         self.model_combo = QComboBox(self)
         self.model_combo.addItems(["1.Spark Lite", "2.Spark Pro", "3.Spark Pro-128K", "4.Spark Max", "5.Spark Max-32K", "6.Spark4.0 Ultra"])
         self.model_combo.setCurrentIndex(0)
@@ -207,6 +216,7 @@ class ChatGui(QMainWindow):
         char_format = QTextCharFormat()
         char_format.setFont(QFont("Arial", 12))
 
+        formatted_message=""
         if tag == "user":
             block_format.setAlignment(Qt.AlignmentFlag.AlignRight)
             formatted_message = f"<b>你</b><br>{message}"
@@ -295,7 +305,7 @@ async def main():
     loop = QEventLoop(app) 
     asyncio.set_event_loop(loop) # 设置事件循环
     with loop:
-        await loop.run_forever()
+        await loop.run_forever() # type: ignore
 
 
 if __name__ == "__main__":
