@@ -19,8 +19,9 @@ class StringToHtml:
             str, html格式的聊天内容
         """
         response = response.replace("\n", "<br>")
-        response = response.replace("```", "<code>", 1)
-        response = response.replace("```", "</code>", 1)
+        while "```" in response:
+            response = response.replace("```", "<code>", 1)
+            response = response.replace("```", "</code>", 1)
         response= re.sub(r'(<br>\s*)+', '<br>', response)
         response = re.sub(r'</code><br>', '</code>', response)
         return response
