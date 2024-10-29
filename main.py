@@ -150,7 +150,7 @@ class ChatGui(QMainWindow):
 
         # 所发送的信号即为
         self.send_data_signal.emit(self.data_structure)
-        self._start_timeout_timer(10000, timestamp)
+        self._start_timeout_timer(100000, timestamp)
 
     def _start_timeout_timer(self, timeout_duration: int, timestamp: str):
         """启动超时计时器。
